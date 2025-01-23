@@ -95,33 +95,31 @@ def check_collision(obj1, obj2):
         else:
             normal = [dx / distance, dy / distance]
 
+        # Tangential vector (perpendicular to the normal)
+        tangent = [-normal[1], normal[0]]
+
+        # Decompose velocities into normal and tangential components
+        v1n = obj1.x_vel * normal[0] + obj1.y_vel * normal[1]
+        v1t = obj1.x_vel * tangent[0] + obj1.y_vel * tangent[1]
+        v2n = obj2.x_vel * normal[0] + obj2.y_vel * normal[1]
+        v2t = obj2.x_vel * tangent[0] + obj2.y_vel * tangent[1]
+
+        # New normal velocities after collision (1D elastic collision)
+        v1n_after = (v1n * (obj1.mass - obj2.mass) + 2 * obj2.mass * v2n) / (obj1.mass + obj2.mass)
+        v2n_after = (v2n * (obj2.mass - obj1.mass) + 2 * obj1.mass * v1n) / (obj1.mass + obj2.mass)
+
+        # Convert the scalar normal and tangential velocities back to vectors
+        obj1.x_vel = v1n_after * normal[0] + v1t * tangent[0]
+        obj1.y_vel = v1n_after * normal[1] + v1t * tangent[1]
+        obj2.x_vel = v2n_after * normal[0] + v2t * tangent[0]
+        obj2.y_vel = v2n_after * normal[1] + v2t * tangent[1]
+
+        # Resolve overlap by moving particles apart
         overlap = obj1.r + obj2.r - distance
         obj1.x -= overlap * normal[0] / 2
         obj1.y -= overlap * normal[1] / 2
         obj2.x += overlap * normal[0] / 2
         obj2.y += overlap * normal[1] / 2
-
-        # Calculate the relative velocity in the normal direction
-        rel_vel_x = obj2.x_vel - obj1.x_vel
-        rel_vel_y = obj2.y_vel - obj1.y_vel
-        rel_vel_normal = rel_vel_x * normal[0] + rel_vel_y * normal[1]
-
-        # Apply elastic collision formula
-        if rel_vel_normal < 0:
-            v1 = [obj1.x_vel, obj1.y_vel]
-            v2 = [obj2.x_vel, obj2.y_vel]
-
-            obj1.x_vel = v1[0] - (obj2.mass / (obj1.mass + obj2.mass)) * rel_vel_normal * normal[0]
-            obj1.y_vel = v1[1] - (obj2.mass / (obj1.mass + obj2.mass)) * rel_vel_normal * normal[1]
-            obj2.x_vel = v2[0] + (obj1.mass / (obj1.mass + obj2.mass)) * rel_vel_normal * normal[0]
-            obj2.y_vel = v2[1] + (obj1.mass / (obj1.mass + obj2.mass)) * rel_vel_normal * normal[1]
-
-    for obj in [obj1, obj2]:
-        obj.x = max(obj.r, min(WIDTH - obj.r, obj.x))
-        obj.y = max(obj.r, min(HEIGHT - obj.r, obj.y))
-
-
-
 
 
 # Creating objects 
