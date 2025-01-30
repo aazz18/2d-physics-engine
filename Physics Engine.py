@@ -3,7 +3,7 @@ import random
 
 pygame.init()
 
-WIDTH, HEIGHT = 600,600
+WIDTH, HEIGHT = 1080,1080
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode([WIDTH,HEIGHT])
 pygame.display.set_caption('Physics Engine')
@@ -147,7 +147,6 @@ while running:
         b.draw()
         b.updatePosition(pos)
         b.move(pos,mouse_down)
-        print(b.x_vel*b.mass, i)
         for c in range(i+1,len(item_list)):
             check_collision(b,item_list[c])
 
