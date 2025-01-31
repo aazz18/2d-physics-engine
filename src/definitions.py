@@ -3,41 +3,43 @@ from math import cos, sin, pi, atan2, sqrt, asin
 from typing import Tuple
 
 speed_of_light = 300000000 # speed of light in a vacuum - C
-WIDTH, HEIGHT = 700, 700
-arrow_scale = 30
+WIDTH, HEIGHT = 700, 700 # width and height of the window
+arrow_scale = 20
 
-def draw_arrow(surface: Surface, color: str, start: Tuple[float, float], end: Tuple[float, float], 
-               arrow_size: int, radius: int, thickness=2):
+
+def draw_arrow(surface: Surface, color: str, start: Tuple[float, float], end: Tuple[float, float],
+               arrow_size: int, radius: int, thickness=1):
     """Draws an arrow from start to end, ensuring it does not phase into a particle."""
+    limit = radius + 5
+    start_vec = Vector2(start)
+    end_vec = Vector2(end)
 
-    limit = radius + 10  # The minimum distance the arrow should stop before reaching the particle
+    # Compute the direction vector
+    direction = end_vec - start_vec
+    distance = direction.length()
 
-    # Compute total distance between start and end
-    distance = sqrt((end[0] - start[0]) ** 2 + (end[1] - start[1]) ** 2)
-    
-    # Prevent division by zero
+    # Prevent division by zero and avoid drawing when the particle is selected
     if distance == 0:
         return  
 
-    # Adjust the endpoint so that the arrow stops at `limit` distance before the actual end
-    if distance > limit:
-        scale = (distance - limit) / distance
-        new_end_x = start[0] + (end[0] - start[0]) * scale
-        new_end_y = start[1] + (end[1] - start[1]) * scale
+    # Ensure the arrow stops before hitting the particle
+    if distance > radius:
+        new_end_vec = start_vec + direction.normalize() * (distance + radius)
     else:
-        return  # If the arrow is too short, don't draw it at all
+        return
 
-    # Draw the main arrow shaft
-    draw.line(surface, color, start, (new_end_x, new_end_y), thickness)
+    # Draw the main arrow line only if it's long enough
+    if distance > limit:
+        draw.line(surface, color, start, (new_end_vec.x, new_end_vec.y), thickness)
 
     # Compute the angle of the arrow
-    angle = atan2(end[1] - start[1], end[0] - start[0])
+    angle = atan2(direction.y, direction.x)
 
-    # Position the arrowhead just at `new_end_x, new_end_y` (so it does not phase into the particle)
-    arrow_point1 = (new_end_x - arrow_size * cos(angle - pi / 6),
-                    new_end_y - arrow_size * sin(angle - pi / 6))
-    arrow_point2 = (new_end_x - arrow_size * cos(angle + pi / 6),
-                    new_end_y - arrow_size * sin(angle + pi / 6))
+    # Position the arrowhead at `new_end_vector
+    arrow_point1 = (new_end_vec.x - arrow_size * cos(angle - pi / 6),
+                    new_end_vec.y - arrow_size * sin(angle - pi / 6))
+    arrow_point2 = (new_end_vec.x - arrow_size * cos(angle + pi / 6),
+                    new_end_vec.y - arrow_size * sin(angle + pi / 6))
 
-    # Draw the arrowhead at the new endpoint
-    draw.polygon(surface, color, [(new_end_x, new_end_y), arrow_point1, arrow_point2])
+    # Always draw the arrowhead
+    draw.polygon(surface, color, [(new_end_vec.x, new_end_vec.y), arrow_point1, arrow_point2])

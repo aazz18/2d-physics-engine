@@ -52,7 +52,7 @@ class Particle:
         end_y = int(self.y + self.y_vel * arrow_scale)
 
         # Draw velocity vector arrow
-        self.arrow= draw_arrow(screen, self.color, (int(self.x), int(self.y)), (end_x, end_y), arrow_size=arrow_scale, radius=self.radius)
+        self.arrow = draw_arrow(screen, self.color, (int(self.x), int(self.y)), (end_x, end_y), arrow_size=arrow_scale, radius=self.radius)
     def total_energy(self) -> float:
         """
         Returns the total relativistic energy of the particle.
