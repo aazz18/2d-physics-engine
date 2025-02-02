@@ -1,7 +1,10 @@
 from typing import Tuple
-from pygame import Surface, draw
+from pygame import Surface, draw, font
 from .definitions import speed_of_light, WIDTH, HEIGHT, draw_arrow, arrow_scale
 from .collisions import calculate_vector
+
+font.init()
+base_font = font.Font(None, 32) 
 
 class Particle:
     def __init__(
@@ -50,6 +53,13 @@ class Particle:
         self.shape = draw.circle(screen, self.color, (int(self.x), int(self.y)), int(self.radius)) 
         end_x = int(self.x + self.x_vel * arrow_scale)
         end_y = int(self.y + self.y_vel * arrow_scale)
+
+
+        attributes = f"(XVel {self.x_vel:.2f}, YVel {self.y_vel:.2f}, Momentum {self.get_current_momentum():.2f})"
+
+        text = base_font.render(attributes, True, (255, 255, 255))
+        text_rect = text.get_rect(center=(self.x, self.y - self.radius - 10))
+        screen.blit(text, text_rect)
 
         # Draw velocity vector arrow
         self.arrow = draw_arrow(screen, self.color, (int(self.x), int(self.y)), (end_x, end_y), arrow_size=arrow_scale, radius=self.radius)
