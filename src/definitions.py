@@ -1,14 +1,14 @@
 from pygame import Surface, Vector2, draw
-from math import cos, sin, pi, atan2, sqrt, asin
+from math import cos, sin, pi, atan2
 from typing import Tuple
 
 speed_of_light = 300000000 # speed of light in a vacuum - C
 WIDTH, HEIGHT = 700, 700 # width and height of the window
-arrow_scale = 20
+arrow_scale = 15
 
 
 def draw_arrow(surface: Surface, color: str, start: Tuple[float, float], end: Tuple[float, float],
-               arrow_size: int, radius: int, thickness=1):
+               arrow_size: int, radius: int, thickness=2):
     """Draws an arrow from start to end, ensuring it does not phase into a particle."""
     limit = radius + 5
     start_vec = Vector2(start)
@@ -21,7 +21,7 @@ def draw_arrow(surface: Surface, color: str, start: Tuple[float, float], end: Tu
     # Prevent division by zero and avoid drawing when the particle is selected
     if distance == 0:
         return  
-
+    
     # Ensure the arrow stops before hitting the particle
     if distance > radius:
         new_end_vec = start_vec + direction.normalize() * (distance + radius)

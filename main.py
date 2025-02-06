@@ -7,7 +7,8 @@ from src.definitions import HEIGHT, WIDTH
 init()
 
 def draw_walls(screen, width, height):
-    """Draws the boundary walls of the simulation."""
+    """Draws the boundary walls of the simulator"""
+    
     color = 'white'
     thickness = 5
     draw.line(screen, color, (0, 0), (width, 0), thickness)  # Upper wall

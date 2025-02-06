@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from pygame import Surface, draw, font, event, K_BACKSPACE, KEYDOWN
+from pygame import Surface, draw, font, event, K_BACKSPACE, KEYDOWN, K_DELETE
 from .definitions import speed_of_light, WIDTH, HEIGHT, draw_arrow, arrow_scale
 from .collisions import calculate_vector
 
@@ -37,7 +37,9 @@ class Particle:
             self.y = pos[1]
 
             for event_instance in event.get():
-                if event_instance.type == KEYDOWN and event_instance.key == K_BACKSPACE:
+                if (event_instance.type == KEYDOWN and 
+                    event_instance.key == K_BACKSPACE) or (event_instance.type == KEYDOWN and
+                                                            event_instance.key == K_DELETE):
                     if self in particles_list:
                         particles_list.remove(self)  # No circular import issue anymore
         else:
