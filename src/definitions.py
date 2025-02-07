@@ -1,16 +1,32 @@
 from pygame import Surface, Vector2, draw
 from math import cos, sin, pi, atan2
 from typing import Tuple
-
 speed_of_light = 300000000 # speed of light in a vacuum - C
 WIDTH, HEIGHT = 700, 700 # width and height of the window
-arrow_scale = 15
+MASS_RATIO = 2.5
+
+arrow_scale = 20
+
+is_stats_shown = False  # Toggle for stats display
+is_simulator_paused = False
+
+
+def draw_walls(screen, width, height):
+    """Draws the boundary walls of the simulator"""
+    
+    color = 'white'
+    thickness = 5
+    draw.line(screen, color, (0, 0), (width, 0), thickness)  # Upper wall
+    draw.line(screen, color, (0, height), (width, height), thickness)  # Lower wall
+    draw.line(screen, color, (0, 0), (0, height), thickness)  # Left wall
+    draw.line(screen, color, (width, 0), (width, height), thickness)  # Right wall
 
 
 def draw_arrow(surface: Surface, color: str, start: Tuple[float, float], end: Tuple[float, float],
-               arrow_size: int, radius: int, thickness=2):
+              arrow_size: int, radius: int, thickness=2):
     """Draws an arrow from start to end, ensuring it does not phase into a particle."""
-    limit = radius + 5
+    
+    limit = radius + 1  # Adjusted limit
     start_vec = Vector2(start)
     end_vec = Vector2(end)
 
@@ -20,7 +36,7 @@ def draw_arrow(surface: Surface, color: str, start: Tuple[float, float], end: Tu
 
     # Prevent division by zero and avoid drawing when the particle is selected
     if distance == 0:
-        return  
+        return    
     
     # Ensure the arrow stops before hitting the particle
     if distance > radius:
