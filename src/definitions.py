@@ -53,8 +53,11 @@ def draw_arrow(surface: Surface, color: str,start: Tuple[float, float],end: Tupl
 
     screen_radius = radius * cam.camera_zoom
     if distance > screen_radius and distance != 0:
-        direction.scale_to_length(distance - screen_radius)
-        adjusted_end = start_vec_screen + direction
+        try:
+            direction.scale_to_length(distance - screen_radius)
+            adjusted_end = start_vec_screen + direction
+        except ValueError:
+            return
     else:
         return
 
