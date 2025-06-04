@@ -1,11 +1,10 @@
-from pygame import init, display, mouse, event, QUIT, KEYDOWN, K_SPACE, time, draw, K_c, key, KMOD_CTRL, K_ESCAPE, K_s, K_m, K_a
+from pygame import init, display, mouse, event, QUIT, KEYDOWN, K_SPACE, time, draw, K_c, key, KMOD_CTRL, K_ESCAPE, K_s, K_m, K_a, MOUSEWHEEL, K_UP, K_DOWN, K_LEFT, K_RIGHT
 from random import randint
 from src.particles import Particle
 from src.collisions import check_collision
 from src.definitions import HEIGHT, WIDTH, MASS_RATIO, is_stats_shown, is_simulator_paused, draw_walls
 from os import system, name
-
-
+import src.camera as cam
 
 
 init()
@@ -31,10 +30,12 @@ print("""[I] Key-binds:
     A: TOGGLE ARROWS
     HOLD + DEL/ HOLD + BACKSPACE: DELETE PARTICLE IF HOLDING
     HOLD: DRAG AND MOVE PARTICLE
+    ARROW KEYS: PAN CAMERA
+    SCROLL WHEEL / TOUCHPAD: ZOOM
 """)
 
 
-screen = display.set_mode((WIDTH, HEIGHT))
+screen = display.set_mode((WIDTH,HEIGHT))
 
 # Global variables
 particles_list = []
@@ -43,6 +44,7 @@ mouse_positions = []
 # Main loop flag
 is_running = True
 is_drawing_arrows = True
+
 
 while is_running:
     if not is_simulator_paused:
@@ -54,17 +56,28 @@ while is_running:
 
         # Get mouse input
         mouse_position = mouse.get_pos()
+        mouse_world_x = mouse_position[0] / cam.camera_zoom + cam.camera_x_offset
+        mouse_world_y = mouse_position[1] / cam.camera_zoom + cam.camera_y_offset
         is_mouse_pressed = mouse.get_pressed()[0]
         
         if is_mouse_pressed:
             mouse_positions.append(mouse_position)
             mouse_positions = mouse_positions[-20:]  # Keep only the last 20 positions
+        else:
+            mouse_positions = []  # Clear positions when mouse is released
 
         # Update and draw particles
         for index, particle in enumerate(particles_list):
-            particle.draw(screen)
-            particle.update_position(mouse_position, mouse_positions, particles_list)  # Pass particles_list here
+            # Needs to convert the camera coordinate into a real world coordinate
+            zoomed_x = int((particle.x - cam.camera_x_offset) * cam.camera_zoom)
+            zoomed_y = int((particle.y - cam.camera_y_offset) * cam.camera_zoom)
+            zoomed_radius = int(particle.radius) * cam.camera_zoom
+            
             particle.move(mouse_position, is_mouse_pressed)
+
+            particle.update_position((mouse_world_x, mouse_world_y), mouse_positions, particles_list)
+
+            particle.draw(screen, zoomed_x, zoomed_y, zoomed_radius)
 
             # Check collisions
             for other_index in range(index + 1, len(particles_list)):
@@ -128,13 +141,32 @@ while is_running:
                     print(f"[I] Turned on arrows!")
                 else:
                     print(f"[I] Turned off arrows!")
-                    
+
+            # Pan camera
+            elif event_instance.key == K_LEFT:
+                cam.camera_x_offset -= cam.camera_pan_speed / cam.camera_zoom
+            elif event_instance.key == K_RIGHT:
+                cam.camera_x_offset += cam.camera_pan_speed / cam.camera_zoom
+            elif event_instance.key == K_UP:
+                cam.camera_y_offset -= cam.camera_pan_speed / cam.camera_zoom
+            elif event_instance.key == K_DOWN:
+                cam.camera_y_offset += cam.camera_pan_speed / cam.camera_zoom
+
+
+                
             elif event_instance.key == K_ESCAPE:
                 is_running = False    
                 print("[I] Exiting simulator!")
             elif event_instance.key == K_c and key.get_mods() & KMOD_CTRL:
                 is_running = False
                 print("[I] Exiting simulator!")
+
+        # Zoom control
+        elif event_instance.type == MOUSEWHEEL:
+            if event_instance.y > 0:
+                cam.camera_zoom += cam.zoom_speed
+            elif event_instance.y < 0 and cam.camera_zoom > cam.zoom_speed:
+                cam.camera_zoom -= cam.zoom_speed
 
     # Show particle count
     if is_simulator_paused:
