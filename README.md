@@ -7,7 +7,8 @@ It is basic in principle and was designed for a mathematical and Physics based p
 
 ## Where can I view the presentation and other information used to publicize the talk?
 
-See `presentation.pptx` and `poster.pdf`.
+- [View Presentation (presentation.pptx)](presentation.pptx)
+- [View Poster (poster.pdf)](poster.pdf)
 
 ## How do I build and run this project?
 
