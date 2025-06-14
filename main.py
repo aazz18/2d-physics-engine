@@ -5,12 +5,16 @@ from src.collisions import check_collision
 from src.definitions import HEIGHT, WIDTH, MASS_RATIO, is_stats_shown, is_simulator_paused, draw_walls
 from os import system, name
 import src.camera as cam
-
+from sys import stdout
 
 init()
 
 system('cls' if name == 'nt' else 'clear')
-system('title 2D Particle Physics Simulator')
+if name == 'nt':  
+    system('title 2D Particle Physics Simulator')
+else:
+    stdout.write("\x1b]0;2D Particle Physics Simulator\x07")
+    stdout.flush()
 
 print("""   ___   ____                      __  _      __                __               _                   _                 __      __            
   |__ \ / __ \   ____  ____ ______/ /_(_)____/ /__       ____  / /_  __  _______(_)_________   _____(_)___ ___  __  __/ /___ _/ /_____  _____
