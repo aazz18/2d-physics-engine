@@ -7,8 +7,8 @@ It is basic in principle and was designed for a mathematical and Physics based p
 
 ## Where can I view the presentation and other information used to publicize the talk?
 
-- [View Presentation (presentation.pdf)](presentation.pdf) - video does not work.
-- [View Presentation (presentation.pdf)](presentation.pptx) - video works.
+- [View Presentation PDF (presentation.pdf)](presentation.pdf) - video does not work.
+- [View Presentation PPTX (presentation.pptx)](presentation.pptx) - video works.
 - [View Poster (poster.pdf)](poster.pdf)
 
 ## How do I build and run this project?
