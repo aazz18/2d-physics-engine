@@ -14,5 +14,7 @@ It is basic in principle and was designed for a mathematical and Physics based p
 ## How do I build and run this project?
 
 Run the following commands:
+`git clone https://github.com/aazz18/2d-physics-engine.git`
+`cd 2d-physics-engine`
 `pip install -r requirements.txt`
 `python main.py`
